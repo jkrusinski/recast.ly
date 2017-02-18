@@ -11,6 +11,7 @@ var getURLSearchParams = function(url) {
 
 var hasSameShape = function(objectOne, objectTwo) {
   if (Object.keys(objectOne).length !== Object.keys(objectTwo).length) {
+    console.log('test1');
     return false;
   }
 
@@ -77,7 +78,8 @@ describe('searchYouTube', function() {
     xhr.restore();
 
     searchYouTube(options, (data) => {
-      expect(hasSameShape(data, window.exampleVideoData)).to.be.true;
+      console.log(data.items);
+      expect(hasSameShape(data.items, window.exampleVideoData)).to.be.true;
       done();
     });
   });
