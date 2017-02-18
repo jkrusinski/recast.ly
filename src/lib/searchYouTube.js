@@ -1,4 +1,4 @@
-var searchYouTube = (options, callback) => {
+var searchYouTube = _.throttle((options, callback) => {
   // TODO
   $.ajax({
     url: 'https://www.googleapis.com/youtube/v3/search',
@@ -12,6 +12,6 @@ var searchYouTube = (options, callback) => {
     success: callback,
     error: err => console.log(err)
   });
-};
+}, 500);
 
 window.searchYouTube = searchYouTube;

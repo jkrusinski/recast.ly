@@ -1,6 +1,6 @@
 var Nav = (props) => (
-  <nav className="navbar">
-    <div className="col-md-6 col-md-offset-3">
+  <nav className="navbar col-sm-8 col-sm-offset-2">
+    <div className="">
       <Search handleSearchInput={props.handleSearchInput} />
     </div>
   </nav>

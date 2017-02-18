@@ -4,10 +4,9 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      videoList: props.videos,
-      currentVid: props.videos[0],
-      searchQuery: '',
-      videoHashTable: this.populateVideoHashTable(props.videos)
+      videoList: null,
+      currentVid: null,
+      videoHashTable: null
     };
   }
 
@@ -19,7 +18,11 @@ class App extends React.Component {
 
   handleSearchInput(event) {
     var context = this;
-    searchYouTube({query: event.target.value, max: 5, key: YOUTUBE_API_KEY}, (data) => {
+    this.props.searchYouTube({query: event.target.value, max: 5, key: YOUTUBE_API_KEY}, (data) => {
+    // hack to fix the stupid, stupid spec
+      if (!data.items) {
+        data.items = data;
+      }
       context.setState({
         videoList: data.items,
         videoHashTable: context.populateVideoHashTable(data.items)
@@ -32,19 +35,49 @@ class App extends React.Component {
       videos[video.id.videoId] = video;
       return videos;
     }, {});
-  }  
+  }
+
+  componentDidMount() {
+    var context = this;
+    this.props.searchYouTube({query: 'Rick Astley', max: 5, key: YOUTUBE_API_KEY}, (data) => {
+      // hack to fix the stupid, stupid spec
+      if (!data.items) {
+        data.items = data;
+      }
+
+      context.setState({
+        videoList: data.items,
+        videoHashTable: context.populateVideoHashTable(data.items),
+        currentVid: data.items[0]
+      });
+    });
+  }
 
   render() {
     return (
-      <div>
+      this.state.videoList ?
+
+
+
+      <div className="container-fluid">
         <Nav handleSearchInput={this.handleSearchInput.bind(this)} />
-        <div className="col-md-7">
-          <VideoPlayer video={this.state.currentVid} />
+        
+        <div className="row">
+          <div className="col-sm-5 col-sm-offset-2">
+            <VideoPlayer video={this.state.currentVid} />
+          </div>
+        
+          <div className="col-sm-3">
+            <VideoList videos={this.state.videoList} handleClick={this.handleClick.bind(this)} />
+          </div>
         </div>
-        <div className="col-md-5">
-          <VideoList videos={this.state.videoList} handleClick={this.handleClick.bind(this)} />
-        </div>
-      </div>
+      </div> 
+
+
+      :
+
+      <div>Waiting for server...</div>
+
     );
   }  
 }
